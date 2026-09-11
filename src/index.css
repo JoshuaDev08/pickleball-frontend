@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: picklepro;
+}
+
+@plugin "daisyui/theme" {
+  name: "picklepro";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* DaisyUI semantic colors */
+  --color-base-100: #f7f5f0;
+  --color-base-200: #ede9df;
+  --color-base-300: #dcd7ca;
+  --color-base-content: #1b2b2b;
+
+  --color-primary: #2d8653;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #1a3828;
+  --color-secondary-content: #ffffff;
+
+  --color-accent: #38a066;
+  --color-accent-content: #ffffff;
+
+  --color-neutral: #1b2b2b;
+  --color-neutral-content: #ffffff;
+
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+
+  --color-success: #2d8653;
+  --color-success-content: #ffffff;
+
+  --color-warning: #e8a020;
+  --color-warning-content: #ffffff;
+
+  --color-error: #e06020;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@theme {
+  /* Brand colors */
+  --color-court: #2d8653;
+  --color-court-light: #38a066;
+  --color-court-dark: #1f6040;
+
+  /* Forest */
+  --color-forest: #1a3828;
+  --color-forest-light: #254d38;
+  --color-forest-dark: #0f2218;
+
+  /* Cream */
+  --color-cream: #f7f5f0;
+  --color-cream-dark: #ede9df;
+
+  /* Text */
+  --color-ink: #1b2b2b;
+  --color-ink-light: #2e4040;
+
+  /* Accents */
+  --color-amber: #e8a020;
+  --color-amber-light: #f4b840;
+  --color-orange-accent: #e06020;
+
+  /* Typography */
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f7f5f0;
+  color: #1b2b2b;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(45, 134, 83, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d8653;
+}
+
+.font-display {
+  font-family: "Outfit", sans-serif;
+}
+
+.font-body {
+  font-family: "Inter", sans-serif;
+}
+
+.font-mono-data {
+  font-family: "JetBrains Mono", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
