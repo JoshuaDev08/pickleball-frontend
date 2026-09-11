@@ -15,9 +15,16 @@ import BookingLayout from "../layout/BookingLayout.tsx";
 import BookingCourtPage from "../pages/booking/BookingCourtPage.tsx";
 import BookingSchedulePage from "../pages/booking/BookingSchedulePage.tsx";
 import BookingDetailsPage from "../pages/booking/BookingDetailsPage.tsx";
-import AdminDashboard from "../pages/admin/AdminOverview.tsx";
+import AdminDashboard from "../pages/admin/main/AdminOverview.tsx";
 
 import AdminLayout from "../layout/AdminLayout.tsx";
+import AdminBookings from "../pages/admin/main/AdminBooking.tsx";
+import AdminCalendar from "../pages/admin/main/AdminCalendar.tsx";
+import AdminCourts from "../pages/admin/operations/AdminCourts.tsx";
+import AdminSessions from "../pages/admin/operations/AdminSessions.tsx";
+import AdminQueue from "../pages/admin/operations/AdminQueue.tsx";
+import AdminCustomers from "../pages/admin/customers.tsx/AdminCustomer.tsx";
+import AdminPayments from "../pages/admin/customers.tsx/AdminPayments.tsx";
 
 function AppRoutes() {
   return (
@@ -52,6 +59,13 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="bookings" element={<AdminBookings />} />
+          <Route path="calendar" element={<AdminCalendar />} />
+          <Route path="courts" element={<AdminCourts />} />
+          <Route path="sessions" element={<AdminSessions />} />
+          <Route path="queue" element={<AdminQueue />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="payments" element={<AdminPayments />} />
         </Route>
       </Routes>
     </BrowserRouter>
