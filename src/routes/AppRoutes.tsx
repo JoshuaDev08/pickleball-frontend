@@ -15,6 +15,9 @@ import BookingLayout from "../layout/BookingLayout.tsx";
 import BookingCourtPage from "../pages/booking/BookingCourtPage.tsx";
 import BookingSchedulePage from "../pages/booking/BookingSchedulePage.tsx";
 import BookingDetailsPage from "../pages/booking/BookingDetailsPage.tsx";
+import AdminDashboard from "../pages/admin/AdminOverview.tsx";
+
+import AdminLayout from "../layout/AdminLayout.tsx";
 
 function AppRoutes() {
   return (
@@ -24,30 +27,18 @@ function AppRoutes() {
         <Route path="/" element={<LandingPage />} />
         {/* Authentication */}
         <Route path="/auth" element={<Auth />} />
+
         {/* Customer */}
         <Route path="/customer" element={<CustomerLayout />}>
-          {/* /customer → /customer/dashboard */}
           <Route
             index
             element={<Navigate to="/customer/dashboard" replace />}
           />
-
-          {/* Overview */}
           <Route path="dashboard" element={<CustomerOverview />} />
-
-          {/* Bookings */}
           <Route path="bookings" element={<BookingsPage />} />
-
-          {/* Active Session */}
           <Route path="sessions/active" element={<ActiveSessionPage />} />
-
-          {/* History */}
           <Route path="sessions" element={<SessionHistoryPage />} />
-
-          {/* Payments */}
           <Route path="payments" element={<PaymentHistoryPage />} />
-
-          {/* Profile */}
           <Route path="profile" element={<ProfilePage />} />
         </Route>
 
@@ -57,6 +48,10 @@ function AppRoutes() {
           <Route path="court" element={<BookingCourtPage />} />
           <Route path="schedule" element={<BookingSchedulePage />} />
           <Route path="details" element={<BookingDetailsPage />} />
+        </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>
