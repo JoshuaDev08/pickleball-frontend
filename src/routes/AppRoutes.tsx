@@ -8,9 +8,8 @@ import CustomerOverview from "../pages/customer/Dashboard/CustomerOverview";
 import BookingsPage from "../pages/customer/booking/CutomerBooking.tsx";
 import ActiveSessionPage from "../pages/customer/Session/ActiveSessionPage.tsx";
 import SessionHistoryPage from "../pages/customer/History/HistoryPage.tsx";
-// Temporary pages
-const PaymentsPage = () => <div>Payments Page</div>;
-const ProfilePage = () => <div>Profile Page</div>;
+import PaymentHistoryPage from "../pages/customer/Payment/Payment.tsx";
+import ProfilePage from "../pages/customer/Profile/ProfilePage.tsx";
 
 function AppRoutes() {
   return (
@@ -43,7 +42,7 @@ function AppRoutes() {
           <Route path="sessions" element={<SessionHistoryPage />} />
 
           {/* Payments */}
-          <Route path="payments" element={<PaymentsPage />} />
+          <Route path="payments" element={<PaymentHistoryPage />} />
 
           {/* Profile */}
           <Route path="profile" element={<ProfilePage />} />
