@@ -167,6 +167,11 @@ const Navbar = () => {
                 {item.label}
               </motion.a>
             ))}
+            <button
+              className="text-sm text-white/70 transition-colors hover:text-white cursor-pointer"
+            >
+              Check-In
+            </button>
           </div>
         </motion.div>
 
@@ -180,6 +185,9 @@ const Navbar = () => {
           <motion.button
             variants={navItemVariants}
             className="btn btn-ghost btn-sm text-white/75 hover:bg-white/10 hover:text-white"
+            onClick={() => {
+              navigate("/auth");
+            }}
           >
             Sign In
           </motion.button>
