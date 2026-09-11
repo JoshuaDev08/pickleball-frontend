@@ -1,11 +1,59 @@
-import { useNavigate } from "react-router-dom";
-import { Bell, CalendarDays, LogOut, Menu, User, X } from "lucide-react";
 import { useState } from "react";
+import { Bell, CalendarDays, LogOut, Menu, User, X } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface CustomerNavProps {
   isLoggedIn?: boolean;
   onLogout?: () => void;
 }
+
+const navItems = [
+  { label: "Courts", href: "#courts" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "#features" },
+  { label: "Testimonials", href: "#testimonials" },
+];
+
+const navItemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -10,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
+const navContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const logoVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
   const navigate = useNavigate();
@@ -16,16 +64,31 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
     navigate(path);
   };
 
+  const handleAnchorNavigation = (href: string) => {
+    setMobileOpen(false);
+
+    if (href.startsWith("#")) {
+      navigate(`/${href}`);
+    }
+  };
+
   return (
     <>
-      {/* Navbar */}
-      <div className="fixed left-0 top-0 z-50 w-full">
-        <div className="navbar min-h-[72px] bg-secondary px-5 text-white shadow-md lg:px-8">
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{
+          duration: 0.4,
+          ease: "easeOut",
+        }}
+        className="fixed left-0 top-0 z-50 w-full"
+      >
+        <div className="navbar min-h-[72px] bg-secondary px-5 text-white lg:px-8">
           {/* =========================
-              NAVBAR START
+              LOGO
           ========================== */}
-          <div className="navbar-start">
-            {/* Mobile Menu Button */}
+          <div className="navbar-start relative z-10">
+            {/* Mobile Menu */}
             <button
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
@@ -39,18 +102,34 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
               )}
             </button>
 
-            {/* Logo */}
-            <button
-              type="button"
-              onClick={() => handleNavigation("/")}
-              className="flex items-center gap-3"
+            <motion.div
+              className="flex cursor-pointer items-center gap-3"
+              variants={logoVariants}
+              initial="hidden"
+              animate="visible"
+              onClick={() => {
+                navigate("/");
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
+              <motion.div
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary"
+                whileHover={{
+                  scale: 1.08,
+                  rotate: -3,
+                }}
+                transition={{
+                  duration: 0.2,
+                }}
+              >
                 <svg
                   viewBox="0 0 24 24"
-                  className="h-5 w-5"
+                  className="h-5 w-5 text-white"
                   fill="none"
-                  stroke="white"
+                  stroke="currentColor"
                   strokeWidth="1.8"
                 >
                   <circle cx="12" cy="12" r="9" />
@@ -58,99 +137,107 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                   <path d="M12 3C12 3 15.5 7.5 15.5 12s-3.5 9-3.5 9" />
                   <path d="M3 12h18" />
                 </svg>
-              </div>
+              </motion.div>
 
               <div className="text-left">
-                <div className="font-display text-lg font-bold leading-none">
+                <div className="font-display text-lg font-bold leading-none text-white">
                   PicklePro
                 </div>
 
-                <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-white/45">
+                <div className="mt-1 text-xs leading-none text-accent">
                   Court Booking
                 </div>
               </div>
-            </button>
+            </motion.div>
           </div>
 
           {/* =========================
-              NAVBAR CENTER
+              DESKTOP NAVIGATION
           ========================== */}
-          <div className="navbar-center hidden md:flex">
-            <ul className="menu menu-horizontal gap-2 px-1">
-              <li>
-                <button
+          <motion.div
+            className="navbar-center relative z-10 hidden md:flex"
+            variants={navContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="flex items-center gap-8">
+              {navItems.map((item) => (
+                <motion.button
+                  key={item.label}
                   type="button"
-                  onClick={() => handleNavigation("/courts")}
-                  className="text-sm text-white/70 hover:bg-white/10 hover:text-white"
+                  variants={navItemVariants}
+                  onClick={() => handleAnchorNavigation(item.href)}
+                  className="cursor-pointer text-sm text-white/70 transition-colors hover:text-white"
+                  whileHover={{ y: -1 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  Courts
-                </button>
-              </li>
+                  {item.label}
+                </motion.button>
+              ))}
 
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigation("/#pricing")}
-                  className="text-sm text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  Pricing
-                </button>
-              </li>
-
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigation("/#events")}
-                  className="text-sm text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  Events
-                </button>
-              </li>
-            </ul>
-          </div>
+              <motion.button
+                type="button"
+                variants={navItemVariants}
+                className="cursor-pointer text-sm text-white/70 transition-colors hover:text-white"
+              >
+                Check-In
+              </motion.button>
+            </div>
+          </motion.div>
 
           {/* =========================
-              NAVBAR END
+              DESKTOP ACTIONS
           ========================== */}
-          <div className="navbar-end gap-4">
+          <motion.div
+            className="navbar-end relative z-10 gap-3"
+            variants={navContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {isLoggedIn ? (
               <>
                 {/* Notifications */}
-                <div className="indicator">
+                <motion.div variants={navItemVariants} className="indicator">
                   <button
+                    type="button"
                     onClick={() => handleNavigation("/customer/notifications")}
-                    className="btn btn-ghost  text-white hover:bg-white/10"
+                    className="btn btn-ghost btn-sm text-white/75 hover:bg-white/10 hover:text-white"
                     aria-label="Notifications"
                   >
-                    <span className="indicator-item badge badge-primary badge-xs">12</span>
+                    <span className="indicator-item badge badge-primary badge-xs">
+                      12
+                    </span>
+
                     <Bell className="h-5 w-5" />
                   </button>
-                </div>
+                </motion.div>
 
                 {/* Book a Court */}
-                <button
+                <motion.button
                   type="button"
+                  variants={navItemVariants}
                   onClick={() => handleNavigation("/booking")}
-                  className="btn btn-primary hidden h-10 min-h-10 rounded-box px-5 text-sm font-semibold text-white shadow-none sm:flex"
+                  className="btn btn-primary btn-sm hidden sm:flex"
                 >
                   Book a Court
-                </button>
+                </motion.button>
 
                 {/* Profile Dropdown */}
-                <div className="dropdown dropdown-end">
+                <motion.div
+                  variants={navItemVariants}
+                  className="dropdown dropdown-end"
+                >
                   <div
                     tabIndex={0}
                     role="button"
                     className="btn btn-ghost h-auto min-h-10 gap-2 px-2 text-white hover:bg-white/10"
                   >
-                    {/* Avatar */}
                     <div className="avatar">
-                      <div className="w-9 flex items-center justify-center rounded-full bg-primary text-white">
+                      <div className="flex w-9 items-center justify-center rounded-full bg-primary text-white">
                         <span className="text-xs font-bold">SC</span>
                       </div>
                     </div>
 
-                    {/* User Info */}
                     <div className="hidden text-left lg:block">
                       <div className="text-xs font-semibold">Sarah Chen</div>
 
@@ -158,12 +245,10 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                     </div>
                   </div>
 
-                  {/* Dropdown Menu */}
                   <ul
                     tabIndex={0}
                     className="menu dropdown-content z-[1] mt-3 w-60 rounded-2xl border border-base-200 bg-base-100 p-2 text-ink shadow-xl"
                   >
-                    {/* User Header */}
                     <li className="pointer-events-none">
                       <div className="flex flex-col items-start px-3 py-3">
                         <span className="font-semibold">Sarah Chen</span>
@@ -176,7 +261,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
 
                     <div className="divider my-1" />
 
-                    {/* Dashboard */}
                     <li>
                       <button
                         type="button"
@@ -187,7 +271,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                       </button>
                     </li>
 
-                    {/* Bookings */}
                     <li>
                       <button
                         type="button"
@@ -198,7 +281,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                       </button>
                     </li>
 
-                    {/* Profile */}
                     <li>
                       <button
                         type="button"
@@ -211,7 +293,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
 
                     <div className="divider my-1" />
 
-                    {/* Logout */}
                     <li>
                       <button
                         type="button"
@@ -225,66 +306,60 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                       </button>
                     </li>
                   </ul>
-                </div>
+                </motion.div>
               </>
             ) : (
               <>
-                {/* Sign In */}
-                <button
+                <motion.button
                   type="button"
+                  variants={navItemVariants}
                   onClick={() => handleNavigation("/auth")}
-                  className="btn btn-ghost hidden text-sm text-white/70 hover:bg-white/10 hover:text-white sm:flex"
+                  className="btn btn-ghost btn-sm text-white/75 hover:bg-white/10 hover:text-white"
                 >
                   Sign In
-                </button>
+                </motion.button>
 
-                {/* Book a Court */}
-                <button
+                <motion.button
                   type="button"
+                  variants={navItemVariants}
                   onClick={() => handleNavigation("/booking")}
-                  className="btn btn-primary h-10 min-h-10 rounded-xl px-5 text-sm font-semibold text-white shadow-none"
+                  className="btn btn-primary btn-sm"
                 >
                   Book a Court
-                </button>
+                </motion.button>
               </>
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* =========================
             MOBILE MENU
         ========================== */}
         {mobileOpen && (
-          <div className="border-t border-white/10 bg-secondary px-5 py-4 text-white shadow-lg md:hidden">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="border-t border-white/10 bg-secondary px-5 py-4 text-white shadow-lg md:hidden"
+          >
             <ul className="menu w-full gap-1 p-0">
-              {/* Public Links */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigation("/courts")}
-                  className="rounded-xl text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  Courts
-                </button>
-              </li>
+              {navItems.map((item) => (
+                <li key={item.label}>
+                  <button
+                    type="button"
+                    onClick={() => handleAnchorNavigation(item.href)}
+                    className="rounded-xl text-white/70 hover:bg-white/10 hover:text-white"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
 
               <li>
                 <button
                   type="button"
-                  onClick={() => handleNavigation("/#pricing")}
                   className="rounded-xl text-white/70 hover:bg-white/10 hover:text-white"
                 >
-                  Pricing
-                </button>
-              </li>
-
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigation("/#events")}
-                  className="rounded-xl text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  Events
+                  Check-In
                 </button>
               </li>
 
@@ -369,7 +444,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                 </li>
               )}
 
-              {/* Mobile Booking Button */}
               <li className="mt-3">
                 <button
                   type="button"
@@ -380,11 +454,11 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                 </button>
               </li>
             </ul>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.nav>
 
-      {/* Spacer for fixed navbar */}
+      {/* Fixed navbar spacer */}
       <div className="h-[72px]" />
     </>
   );
