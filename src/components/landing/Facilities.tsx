@@ -3,33 +3,48 @@ import { motion, type Variants } from "framer-motion";
 import COURT_INDOOR from "../../assets/court-indoor.jpg";
 import COURT_OUTDOOR from "../../assets/court-outdoor.jpg";
 import COURT_PREMIUM from "../../assets/court-premium.jpg";
+import { useCourts, type CourtStatus } from "../../context/courtContext";
 
-const courts = [
+const courtImages: Record<string, string> = {
+  indoor: COURT_INDOOR,
+  outdoor: COURT_OUTDOOR,
+  premium: COURT_PREMIUM,
+};
+
+const statusConfig: Record<
+  CourtStatus,
   {
-    name: "Court A1",
-    type: "Indoor",
-    rate: 25,
-    available: true,
-    img: COURT_INDOOR,
-    features: ["Climate Controlled", "LED Lighting", "Premium Surface"],
+    label: string;
+    badgeClass: string;
+    dotClass: string;
+    buttonLabel: string;
+  }
+> = {
+  available: {
+    label: "Available",
+    badgeClass: "badge-success",
+    dotClass: "bg-success-content",
+    buttonLabel: "Book This Court",
   },
-  {
-    name: "Court B1",
-    type: "Outdoor",
-    rate: 18,
-    available: true,
-    img: COURT_OUTDOOR,
-    features: ["Open Air", "Professional Net", "Night Lighting"],
+  occupied: {
+    label: "Occupied",
+    badgeClass: "badge-warning",
+    dotClass: "bg-warning-content",
+    buttonLabel: "Currently Occupied",
   },
-  {
-    name: "Court A2",
-    type: "Indoor",
-    rate: 25,
-    available: false,
-    img: COURT_PREMIUM,
-    features: ["Climate Controlled", "LED Lighting", "Premium Surface"],
+  reserved: {
+    label: "Reserved",
+    badgeClass: "badge-info",
+    dotClass: "bg-info-content",
+    buttonLabel: "Currently Reserved",
   },
-];
+  maintenance: {
+    label: "Maintenance",
+    badgeClass: "badge-neutral",
+    dotClass: "bg-neutral-content",
+    buttonLabel: "Under Maintenance",
+  },
+};
 
 const headerVariants: Variants = {
   hidden: {
@@ -71,6 +86,7 @@ const cardVariants: Variants = {
 };
 
 const Facilities = () => {
+  const { courts, loading, error } = useCourts();
   return (
     <section className="w-full bg-base-100 px-6 py-20">
       <div className="mx-auto w-full max-w-6xl">
@@ -108,6 +124,12 @@ const Facilities = () => {
         </motion.div>
 
         {/* Court Cards */}
+        {error && !loading && (
+          <div className="mb-6 rounded-2xl border border-error/20 bg-error/10 px-5 py-4 text-sm text-error-content">
+            {error}
+          </div>
+        )}
+
         <motion.div
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           variants={cardsContainerVariants}
@@ -118,156 +140,202 @@ const Facilities = () => {
             amount: 0.15,
           }}
         >
-          {courts.map((court) => (
-            <motion.div
-              key={court.name}
-              variants={cardVariants}
-              className="group card overflow-hidden border border-base-200 bg-white shadow-sm"
-              whileHover={{
-                y: -2,
-                boxShadow: "0 20px 40px rgba(27, 43, 43, 0.12)",
-              }}
-              transition={{
-                duration: 0.3,
-                ease: "easeOut",
-              }}
-            >
-              {/* Image */}
-              <figure className="relative h-56 overflow-hidden bg-base-200">
-                <motion.img
-                  src={court.img}
-                  alt={`${court.name} ${court.type} pickleball court`}
-                  className="h-full w-full object-cover"
-                  whileHover={{
-                    scale: 1.06,
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    ease: "easeOut",
-                  }}
-                />
-
-                {/* Image Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-                {/* Availability */}
+          {loading
+            ? [1, 2, 3].map((item) => (
                 <motion.div
-                  className="absolute right-4 top-4"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 0.25,
-                  }}
+                  key={item}
+                  variants={cardVariants}
+                  className="card overflow-hidden border border-base-200 bg-white shadow-sm"
                 >
-                  <span
-                    className={`badge border-0 px-3 py-3 font-semibold ${
-                      court.available ? "badge-success" : "badge-neutral"
-                    }`}
-                  >
-                    <span
-                      className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                        court.available
-                          ? "bg-success-content"
-                          : "bg-neutral-content"
-                      }`}
-                    />
+                  <div className="skeleton h-56 w-full rounded-none bg-base-200" />
 
-                    {court.available ? "Available" : "Occupied"}
-                  </span>
-                </motion.div>
+                  <div className="card-body p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-2">
+                        <div className="skeleton h-5 w-28 bg-base-200" />
+                        <div className="skeleton h-3 w-40 bg-base-200" />
+                      </div>
 
-                {/* Court Type */}
-                <div className="absolute bottom-4 left-4">
-                  <span className="badge border-0 bg-secondary/90 px-3 py-3 text-secondary-content backdrop-blur-sm">
-                    {court.type}
-                  </span>
-                </div>
-              </figure>
-
-              {/* Content */}
-              <div className="card-body flex flex-col p-5">
-                {/* Name + Price */}
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-base-content">
-                      {court.name}
-                    </h3>
-
-                    <p className="mt-1 text-xs text-base-content/50">
-                      Professional pickleball court
-                    </p>
-                  </div>
-
-                  <div className="shrink-0 text-right">
-                    <div className="font-display text-xl font-bold text-primary">
-                      ${court.rate}
+                      <div className="space-y-2">
+                        <div className="skeleton h-6 w-16 bg-base-200" />
+                        <div className="skeleton h-3 w-14 bg-base-200" />
+                      </div>
                     </div>
 
-                    <div className="text-xs text-base-content/40">per hour</div>
+                    <div className="mt-4 flex gap-2">
+                      <div className="skeleton h-6 w-24 bg-base-200" />
+                      <div className="skeleton h-6 w-20 bg-base-200" />
+                    </div>
+
+                    <div className="skeleton mt-5 h-10 w-full bg-base-200" />
                   </div>
-                </div>
-
-                {/* Features */}
-                <motion.div
-                  className="mt-4 flex flex-wrap gap-1.5"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={{
-                    hidden: {},
-                    visible: {
-                      transition: {
-                        staggerChildren: 0.06,
-                      },
-                    },
-                  }}
-                >
-                  {court.features.map((feature) => (
-                    <motion.span
-                      key={feature}
-                      variants={{
-                        hidden: {
-                          opacity: 0,
-                          scale: 0.9,
-                        },
-                        visible: {
-                          opacity: 1,
-                          scale: 1,
-                          transition: {
-                            duration: 0.3,
-                            ease: "easeOut",
-                          },
-                        },
-                      }}
-                      className="badge badge-sm border-0 bg-base-200 px-2.5 text-base-content/70"
-                    >
-                      {feature}
-                    </motion.span>
-                  ))}
                 </motion.div>
+              ))
+            : courts.slice(0, 3).map((court) => {
+                const status = statusConfig[court.status];
 
-                {/* Action */}
-                <div className="mt-auto pt-5">
-                  {court.available ? (
-                    <button className="btn btn-primary w-full rounded-box">
-                      Book This Court
-                      <span aria-hidden="true">→</span>
-                    </button>
-                  ) : (
-                    <button
-                      className="btn w-full rounded-xl border-base-200 bg-base-200 text-base-content/40"
-                      disabled
-                    >
-                      Currently Occupied
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                const image =
+                  courtImages[court.image_key?.toLowerCase() ?? ""] ??
+                  (court.type.toLowerCase() === "outdoor"
+                    ? COURT_OUTDOOR
+                    : court.type.toLowerCase() === "premium"
+                    ? COURT_PREMIUM
+                    : COURT_INDOOR);
+
+                return (
+                  <motion.div
+                    key={court.id}
+                    variants={cardVariants}
+                    className="group card overflow-hidden border border-base-200 bg-white shadow-sm"
+                    whileHover={{
+                      y: -2,
+                      boxShadow: "0 20px 40px rgba(27, 43, 43, 0.12)",
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeOut",
+                    }}
+                  >
+                    {/* Image */}
+                    <figure className="relative h-56 overflow-hidden bg-base-200">
+                      <motion.img
+                        src={court.image_url ?? image}
+                        alt={`${court.name} ${court.type} pickleball court`}
+                        className="h-full w-full object-cover"
+                        whileHover={{
+                          scale: 1.06,
+                        }}
+                        transition={{
+                          duration: 0.6,
+                          ease: "easeOut",
+                        }}
+                      />
+
+                      {/* Image Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+                      {/* Availability */}
+                      <motion.div
+                        className="absolute right-4 top-4"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.4,
+                          delay: 0.25,
+                        }}
+                      >
+                        <span
+                          className={`badge border-0 px-3 py-3 font-semibold ${status.badgeClass}`}
+                        >
+                          <span
+                            className={`mr-1.5 h-1.5 w-1.5 rounded-full ${status.dotClass}`}
+                          />
+
+                          {status.label}
+                        </span>
+                      </motion.div>
+
+                      {/* Court Type */}
+                      <div className="absolute bottom-4 left-4">
+                        <span className="badge border-0 bg-secondary/90 px-3 py-3 text-secondary-content backdrop-blur-sm">
+                          {court.type}
+                        </span>
+                      </div>
+                    </figure>
+
+                    {/* Content */}
+                    <div className="card-body flex flex-col p-5">
+                      {/* Name + Price */}
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="font-display text-lg font-bold text-base-content">
+                            {court.name}
+                          </h3>
+
+                          <p className="mt-1 text-xs text-base-content/50">
+                            {court.description ||
+                              "Professional pickleball court"}
+                          </p>
+                        </div>
+
+                        <div className="shrink-0 text-right">
+                          <div className="font-display text-xl font-bold text-primary">
+                            ₱{court.rate.toLocaleString()}
+                          </div>
+
+                          <div className="text-xs text-base-content/40">
+                            per hour
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Features */}
+                      <motion.div
+                        className="mt-4 flex flex-wrap gap-1.5"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={{
+                          hidden: {},
+                          visible: {
+                            transition: {
+                              staggerChildren: 0.06,
+                            },
+                          },
+                        }}
+                      >
+                        {court.features.map((feature) => (
+                          <motion.span
+                            key={feature}
+                            variants={{
+                              hidden: {
+                                opacity: 0,
+                                scale: 0.9,
+                              },
+                              visible: {
+                                opacity: 1,
+                                scale: 1,
+                                transition: {
+                                  duration: 0.3,
+                                  ease: "easeOut",
+                                },
+                              },
+                            }}
+                            className="badge badge-sm border-0 bg-base-200 px-2.5 text-base-content/70"
+                          >
+                            {feature}
+                          </motion.span>
+                        ))}
+                      </motion.div>
+
+                      {/* Action */}
+                      <div className="mt-auto pt-5">
+                        {court.status === "available" ? (
+                          <button className="btn btn-primary w-full rounded-box">
+                            Book This Court
+                            <span aria-hidden="true">→</span>
+                          </button>
+                        ) : (
+                          <button
+                            className="btn w-full rounded-xl border-base-200 bg-base-200 text-base-content/40"
+                            disabled
+                          >
+                            {status.buttonLabel}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
         </motion.div>
+
+        {!loading && !error && courts.length === 0 && (
+          <div className="mt-6 rounded-2xl border border-base-200 bg-base-200/50 px-6 py-10 text-center text-sm text-base-content/60">
+            No courts are available at the moment.
+          </div>
+        )}
 
         {/* Mobile View All */}
         <motion.div

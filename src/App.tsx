@@ -1,12 +1,15 @@
 import AppRoutes from "./routes/AppRoutes";
 import { Toaster } from "sileo";
 import { AuthProvider } from "./context/authContext";
+import { CourtProvider } from "./context/courtContext";
 
 function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-right" />
-      <AppRoutes />
+      <CourtProvider>
+        <Toaster position="top-right" />
+        <AppRoutes />
+      </CourtProvider>
     </AuthProvider>
   );
 }

@@ -1,36 +1,14 @@
 import { motion, type Variants } from "framer-motion";
 import HERO_IMG from "../../assets/hero.jpg";
+import { useCourts, type CourtStatus } from "../../context/courtContext";
 
-const availabilityData = [
-  {
-    court: "Court A1",
-    type: "Indoor",
-    status: "Available",
-    time: "From 4:00 PM",
-    statusClass: "badge-success",
-  },
-  {
-    court: "Court A2",
-    type: "Indoor",
-    status: "Occupied",
-    time: "Free at 5:30 PM",
-    statusClass: "badge-warning",
-  },
-  {
-    court: "Court B1",
-    type: "Outdoor",
-    status: "Available",
-    time: "From 3:30 PM",
-    statusClass: "badge-success",
-  },
-  {
-    court: "Court B3",
-    type: "Outdoor",
-    status: "Maintenance",
-    time: "Net repair",
-    statusClass: "badge-neutral",
-  },
-];
+type CourtAvailability = {
+  id: number;
+  court: string;
+  type: string;
+  status: string;
+  time: string;
+};
 
 const stats = [
   {
@@ -146,7 +124,16 @@ const listItemVariants: Variants = {
   },
 };
 
+const statusBadgeClasses: Record<CourtStatus, string> = {
+  available: "badge-success text-success-content",
+  occupied: "badge-warning text-warning-content",
+  reserved: "badge-info text-info-content",
+  maintenance: "badge-neutral text-neutral-content",
+};
+
 export default function Hero() {
+  const { courts, loading, error } = useCourts();
+
   return (
     <section className="relative isolate min-h-[620px] overflow-hidden bg-secondary">
       {/* Background Image */}
@@ -286,45 +273,77 @@ export default function Hero() {
               initial="hidden"
               animate="visible"
             >
-              {availabilityData.map((court) => (
-                <motion.div
-                  key={court.court}
-                  variants={listItemVariants}
-                  className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.045] px-4 py-3.5 transition-colors hover:bg-white/[0.08]"
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Court Indicator */}
-                    <motion.div
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15"
-                      whileHover={{
-                        scale: 1.08,
-                        rotate: -3,
-                      }}
-                      transition={{
-                        duration: 0.2,
-                      }}
-                    >
-                      <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-                    </motion.div>
-
-                    <div>
-                      <p className="text-sm font-semibold text-white">
-                        {court.court}
-                      </p>
-
-                      <p className="mt-0.5 text-xs text-white/40">
-                        {court.type} · {court.time}
-                      </p>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`badge badge-sm ${court.statusClass} border-0 px-2.5`}
+              {loading ? (
+                [1, 2, 3, 4].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.045] px-4 py-3.5"
                   >
-                    {court.status}
-                  </span>
-                </motion.div>
-              ))}
+                    <div className="flex items-center gap-3">
+                      <div className="skeleton h-9 w-9 rounded-xl bg-white/10" />
+
+                      <div className="space-y-2">
+                        <div className="skeleton h-3 w-24 bg-white/10" />
+                        <div className="skeleton h-2 w-32 bg-white/10" />
+                      </div>
+                    </div>
+
+                    <div className="skeleton h-6 w-20 rounded-full bg-white/10" />
+                  </div>
+                ))
+              ) : error ? (
+                <div className="rounded-2xl border border-error/20 bg-error/10 px-4 py-4 text-sm text-error-content">
+                  {error}
+                </div>
+              ) : courts.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-4 text-sm text-white/60">
+                  No courts are currently available.
+                </div>
+              ) : (
+                courts.map((court) => (
+                  <motion.div
+                    key={court.id}
+                    variants={listItemVariants}
+                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.045] px-4 py-3.5 transition-colors hover:bg-white/[0.08]"
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Court Indicator */}
+                      <motion.div
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15"
+                        whileHover={{
+                          scale: 1.08,
+                          rotate: -3,
+                        }}
+                        transition={{
+                          duration: 0.2,
+                        }}
+                      >
+                        <div className="h-2.5 w-2.5 rounded-full bg-primary" />
+                      </motion.div>
+
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          {court.name}
+                        </p>
+
+                        <p className="mt-0.5 text-xs text-white/40">
+                          {court.type} · {court.availability_label}
+                        </p>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`badge badge-sm border-0 px-2.5 ${
+                        statusBadgeClasses[court.status] ??
+                        "badge-ghost text-white/70"
+                      }`}
+                    >
+                      {court.status.charAt(0).toUpperCase() +
+                        court.status.slice(1)}
+                    </span>
+                  </motion.div>
+                ))
+              )}
             </motion.div>
 
             {/* Card Footer */}
@@ -340,9 +359,16 @@ export default function Hero() {
               <div className="mb-4 flex items-center justify-between text-xs">
                 <span className="text-white/40">Next available court</span>
 
-                <span className="font-mono-data font-medium text-primary">
-                  Court B1 · 3:30 PM
-                </span>
+                {loading ? (
+                  <span className="text-white/40">Loading...</span>
+                ) : error ? (
+                  <span className="text-white/40">Unavailable</span>
+                ) : (
+                  <span className="font-mono-data font-medium text-primary">
+                    {courts.find((court) => court.status === "available")
+                      ?.name ?? "No court available"}
+                  </span>
+                )}
               </div>
 
               <button className="btn btn-primary w-full rounded-xl">

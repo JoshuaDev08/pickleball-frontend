@@ -31,12 +31,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const loadUser = async () => {
+      const token = localStorage.getItem("auth_token");
+
+      // No token means the visitor is simply logged out.
+      // Do not call the protected /auth/me endpoint.
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         const currentUser = await authService.me();
 
         setUser(currentUser);
-      } catch {
-        setUser(null);
+      } catch (error: any) {
+        // A 401 means the token is missing, expired, or invalid.
+        if (error.response?.status === 401) {
+          localStorage.removeItem("auth_token");
+          setUser(null);
+        } else {
+          console.error("Failed to load authenticated user:", error);
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -48,13 +65,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (credentials: LoginRequest) => {
     const response = await authService.login(credentials);
 
+    /*
+     * Adjust this line if your login response uses
+     * a different property name for the token.
+     */
+    if (response.data.token) {
+      localStorage.setItem("auth_token", response.data.token);
+    }
+
     setUser(response.data.user);
   };
 
   const logout = async () => {
     try {
       await authService.logout();
+    } catch (error) {
+      console.error("Logout request failed:", error);
     } finally {
+      localStorage.removeItem("auth_token");
       setUser(null);
     }
   };
@@ -78,7 +106,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
+    throw new Error("useAuth must be used inside an AuthProvider");
   }
 
   return context;
