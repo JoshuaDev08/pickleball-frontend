@@ -1,6 +1,8 @@
 import { motion, type Variants } from "framer-motion";
 import HERO_IMG from "../../assets/hero.jpg";
 import { useCourts, type CourtStatus } from "../../context/courtContext";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 type CourtAvailability = {
   id: number;
@@ -132,7 +134,45 @@ const statusBadgeClasses: Record<CourtStatus, string> = {
 };
 
 export default function Hero() {
+  const navigate = useNavigate();
   const { courts, loading, error } = useCourts();
+
+  const availableCourts = courts.filter(
+    (court) => court.status === "available"
+  ).length;
+
+  const useCountUp = (target: number, duration = 900) => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      let animationFrame: number;
+      const startTime = performance.now();
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Ease-out animation
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+        setCount(Math.round(target * easedProgress));
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      };
+
+      animationFrame = requestAnimationFrame(animate);
+
+      return () => {
+        cancelAnimationFrame(animationFrame);
+      };
+    }, [target, duration]);
+
+    return count;
+  };
+
+  const animatedAvailableCourts = useCountUp(availableCourts, 900);
 
   return (
     <section className="relative isolate min-h-[620px] overflow-hidden bg-secondary">
@@ -169,9 +209,31 @@ export default function Hero() {
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-warning opacity-60" />
+
               <span className="relative inline-flex h-2 w-2 rounded-full bg-warning" />
             </span>
-            12 Courts Available Now
+
+            {loading ? (
+              "Checking availability..."
+            ) : (
+              <>
+                <motion.span
+                  key={availableCourts}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeOut",
+                  }}
+                >
+                  {animatedAvailableCourts}
+                </motion.span>
+
+                {animatedAvailableCourts === 1
+                  ? " Court Available Now"
+                  : " Courts Available Now"}
+              </>
+            )}
           </motion.div>
 
           {/* Heading */}
@@ -198,12 +260,18 @@ export default function Hero() {
             variants={fadeUpVariants}
             className="mt-8 flex flex-wrap gap-3"
           >
-            <button className="btn btn-primary btn-lg rounded-xl px-7 shadow-lg shadow-primary/20">
+            <button
+              className="btn btn-primary btn-lg rounded-xl px-7 shadow-lg shadow-primary/20"
+              onClick={() => navigate("/booking")}
+            >
               Book a Court
               <span aria-hidden="true">→</span>
             </button>
 
-            <button className="btn btn-outline btn-lg rounded-xl border-white/20 bg-white/5 px-7 text-white hover:border-white/30 hover:bg-white/10 hover:text-white">
+            <button
+              className="btn btn-outline btn-lg rounded-xl border-white/20 bg-white/5 px-7 text-white hover:border-white/30 hover:bg-white/10 hover:text-white"
+              onClick={() => navigate("/staff")}
+            >
               Walk-In Check-In
             </button>
           </motion.div>

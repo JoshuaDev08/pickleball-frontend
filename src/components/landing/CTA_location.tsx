@@ -1,5 +1,6 @@
 import { motion, type Variants } from "framer-motion";
 import { Clock3, Mail, MapPin, Phone } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const contentVariants: Variants = {
   hidden: {
@@ -56,6 +57,7 @@ const detailVariants: Variants = {
 };
 
 const LocationCTA = () => {
+  const navigate = useNavigate();
   return (
     <section className="w-full bg-secondary px-6 py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
@@ -133,11 +135,21 @@ const LocationCTA = () => {
             minutes.
           </p>
 
-          <button className="btn btn-primary w-full border-0 py-3.5 text-base font-semibold text-white transition-transform">
+          <button
+            className="btn btn-primary w-full border-0 py-3.5 text-base font-semibold text-white transition-transform"
+            onClick={() => {
+              navigate("/booking");
+            }}
+          >
             Book Your First Court
           </button>
 
-          <button className="btn btn-outline mt-3 w-full border-white/15 bg-transparent text-sm font-semibold text-white/60 hover:border-white/25 hover:bg-white/5 hover:text-white">
+          <button
+            className="btn btn-outline mt-3 w-full border-white/15 bg-transparent text-sm font-semibold text-white/60 hover:border-white/25 hover:bg-white/5 hover:text-white"
+            onClick={() => {
+              navigate("/auth");
+            }}
+          >
             Sign In to Existing Account
           </button>
         </motion.div>

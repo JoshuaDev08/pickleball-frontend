@@ -174,14 +174,6 @@ const CustomerNav = ({ isLoggedIn = false, onLogout }: CustomerNavProps) => {
                   {item.label}
                 </motion.button>
               ))}
-
-              <motion.button
-                type="button"
-                variants={navItemVariants}
-                className="cursor-pointer text-sm text-white/70 transition-colors hover:text-white"
-              >
-                Check-In
-              </motion.button>
             </div>
           </motion.div>
 

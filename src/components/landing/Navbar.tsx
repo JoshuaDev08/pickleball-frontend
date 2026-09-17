@@ -167,11 +167,6 @@ const Navbar = () => {
                 {item.label}
               </motion.a>
             ))}
-            <button
-              className="text-sm text-white/70 transition-colors hover:text-white cursor-pointer"
-            >
-              Check-In
-            </button>
           </div>
         </motion.div>
 
