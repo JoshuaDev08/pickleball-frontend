@@ -214,12 +214,7 @@ export default function Hero() {
             className="mt-10 grid max-w-lg grid-cols-3 border-t border-white/10 pt-7"
           >
             {stats.map((stat) => (
-              <motion.div
-                key={stat.label}
-                className="pr-4"
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.2 }}
-              >
+              <div key={stat.label} className="pr-4">
                 <div className="font-display text-2xl font-bold text-white sm:text-3xl">
                   {stat.value}
                 </div>
@@ -227,7 +222,7 @@ export default function Hero() {
                 <div className="mt-1 text-[11px] leading-4 text-white/40 sm:text-xs">
                   {stat.label}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </motion.div>
         </motion.div>

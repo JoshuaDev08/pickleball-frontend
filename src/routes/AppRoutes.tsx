@@ -25,6 +25,10 @@ import AdminSessions from "../pages/admin/operations/AdminSessions.tsx";
 import AdminQueue from "../pages/admin/operations/AdminQueue.tsx";
 import AdminCustomers from "../pages/admin/customers.tsx/AdminCustomer.tsx";
 import AdminPayments from "../pages/admin/customers.tsx/AdminPayments.tsx";
+import ReceptionistLayout from "../layout/ReceptionistLayout.tsx";
+import FindBooking from "../pages/admin/walkinandCheckin/Findbooking.tsx";
+import QrCheckIn from "../pages/admin/walkinandCheckin/QrCheckIn.tsx";
+import WalkIn from "../pages/admin/walkinandCheckin/JoinQueue.tsx";
 
 function AppRoutes() {
   return (
@@ -56,6 +60,8 @@ function AppRoutes() {
           <Route path="schedule" element={<BookingSchedulePage />} />
           <Route path="details" element={<BookingDetailsPage />} />
         </Route>
+
+        {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
@@ -66,6 +72,19 @@ function AppRoutes() {
           <Route path="queue" element={<AdminQueue />} />
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="payments" element={<AdminPayments />} />
+        </Route>
+
+        {/* receptionist */}
+        <Route path="/staff" element={<ReceptionistLayout />}>
+          <Route
+            index
+            element={<Navigate to="/staff/find-booking" replace />}
+          />
+          <Route path="find-booking" element={<FindBooking />} />
+
+          <Route path="qr-checkin" element={<QrCheckIn />} />
+
+          <Route path="walk-in" element={<WalkIn />} />
         </Route>
       </Routes>
     </BrowserRouter>
